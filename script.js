@@ -64,6 +64,7 @@ function generateSuggestions(i, root, word, maxEdits, suggestions){
     }
 }
 
+
 function sortSuggestions(suggestions, maxEdits) {
     return Object.entries(suggestions)
         .map(([word, editsLeft]) => [word, maxEdits - editsLeft])

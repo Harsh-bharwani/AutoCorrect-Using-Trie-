@@ -68,14 +68,25 @@ function generateSuggestions(i, root, word, maxEdits, suggestions) {
   }
 }
 
+function prefixMatch(a, b){
+    let ct=0;
+    for(let i=0, j=0;i<a.length && j<b.length;i++, j++){
+        if(a.charAt(i)!=b.charAt(j)) break;
+        ct++;
+    }
+    return ct;
+}
 function getSuggestions(root, input, maxEdits = 2) {
   let suggestions = {};
   generateSuggestions(0, root, input.toLowerCase(), maxEdits, suggestions);
-
   let sorted = Object.entries(suggestions)
     .map(([word, score]) => [word, maxEdits - score])
-    .sort((a, b) => a[1] - b[1] || a[0].localeCompare(b[0]));
-
+    .sort((a, b) => {
+      if(a[1]!=b[1]) return a[1] - b[1];
+      const p1=prefixMatch(a[0], input);
+      const p2=prefixMatch(b[0], input);
+      return p2-p1;
+    });
   return sorted;
 }
 

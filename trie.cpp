@@ -1,6 +1,7 @@
 #include<bits/stdc++.h>
 #include<fstream> // for file input/ output
 using namespace std;
+string input;
 
 struct TrieNode{    
     TrieNode* children[26];
@@ -86,15 +87,21 @@ void  generateSuggestions(int i, TrieNode* root, string& word, int maxEdits, uno
     }
 }
 
+int prefixMatch(string a, string b){
+    int ct=0;
+    for(int i=0, j=0;i<a.size() && j<b.size();i++, j++){
+        if(a[i]!=b[i]) break;
+        ct++;
+    }
+    return ct;
+}
 bool compare(pair<string, int>& p1, pair<string, int>& p2){
-    if(p1.second==p2.second) return p1.first<p2.first;
+    if(p1.second==p2.second) return prefixMatch(p1.first, input)>prefixMatch(p2.first, input);
     return p1.second>p2.second;
 }
-
 int main(){
     TrieNode* root=new TrieNode();  
     loadDisctionary(root, "dictionary.txt");     
-    string input;
     cin>>input;
     insert(root, "tumbler");
     if(search(root, input)){
