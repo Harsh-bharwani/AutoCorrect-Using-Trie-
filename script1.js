@@ -136,7 +136,7 @@ function autoCorrect() {
 
   // Add small delay to show loading animation
   setTimeout(() => {
-    let maxEdits = 3;
+    let maxEdits = 2;
     let result = getSuggestions(root, inputWord, maxEdits);
 
     if (result.length > 0 && result[0][1] === 0) {
