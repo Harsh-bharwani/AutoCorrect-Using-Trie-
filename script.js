@@ -25,7 +25,8 @@ function search(root, word){
     return node.isEndOfWord;
 }
 
-function generateSuggestions(i, root, word, maxEdits, suggestions){
+function generateSuggestions(i, root, word, maxEdits, suggestions, visited){
+    const key = i+ "|" + word + "|" + maxEdits; // where 'step' is the i-th step in
     if(search(root, word)){
         if(!suggestions[word] || suggestions[word]<maxEdits){
             suggestions[word]=maxEdits;
@@ -33,37 +34,27 @@ function generateSuggestions(i, root, word, maxEdits, suggestions){
         return;
     }
     if(i>=word.length || maxEdits ==0) return;
-    generateSuggestions(i + 1, root, word, maxEdits, suggestions);
-    let idx=word.charCodeAt(i);
-    let originalCh=word.charAt(i);
+    if(visited.has(key)) return;
+    visited.add(key);
+    // Directly jumping to the next index
+    generateSuggestions(i + 1, root, word, maxEdits, suggestions, visited);
     for(let j=0;j<26;j++){
         const ch=String.fromCharCode(j+'a'.charCodeAt());
         // update
-        word = word.slice(0, i) + ch + word.slice(i+1);
-        generateSuggestions(i + 1, root, word, maxEdits-1, suggestions);
-        word = word.slice(0, i) + originalCh + word.slice(i+1);
-
+        generateSuggestions(i + 1, root, word.slice(0, i) + ch + word.slice(i+1), maxEdits-1, suggestions, visited);
         // insert
-        word = word.slice(0, i) + ch + word.slice(i);
-        generateSuggestions(i + 1, root, word, maxEdits-1, suggestions);
-        word = word.slice(0, i) + originalCh + word.slice(i+1);
-
-        // delete
-        word=word.slice(0, i) + word.slice(i+1);
-        generateSuggestions(i + 1, root, word, maxEdits-1, suggestions);
-        word=word.slice(0, i) + originalCh + word.slice(i+1);
-
-        // transpositions
-
-        if(i+1<word.length)
-        {
-            const wordArr=word.split('');
-            [wordArr[i], wordArr[i+1]]=[wordArr[i+1], wordArr[i]];
-            generateSuggestions(i+2, root, wordArr.join(''), maxEdits-1, suggestions);
-        }
+        generateSuggestions(i + 1, root, word.slice(0, i) + ch + word.slice(i), maxEdits-1, suggestions, visited);
     }
+    // delete
+    generateSuggestions(i + 1, root, word.slice(0, i) + word.slice(i+1), maxEdits-1, suggestions, visited);
+    // transpositions
+    if(i+1<word.length)
+    {
+        const wordArr=word.split('');
+        [wordArr[i], wordArr[i+1]]=[wordArr[i+1], wordArr[i]];
+        generateSuggestions(i+2, root, wordArr.join(''), maxEdits-1, suggestions, visited);
+    } 
 }
-
 
 function sortSuggestions(suggestions, maxEdits) {
     return Object.entries(suggestions)
@@ -73,15 +64,31 @@ function sortSuggestions(suggestions, maxEdits) {
             return a[1] - b[1];
         });
 }
+function prefixMatch(input, str){
+    let ct=0;
+    for(let i=0;i<Math.min(input.length, str.length);i++){
+        if(input.charAt(i)!=str.charAt(i)) return ct;
+        ct++;
+    }
+    return ct;
+}
+function compare(){
+    return (a, b)=>{
+        if(a[1]!=b[1]) return a[1]-b[1];
+        const p1=prefixMatch(a[0], input);
+        const p2=prefixMatch(b[0], input);
+        return p2-p1;
+    }
+}
 
-function getSuggestions(root, input, maxEdits = 2) {
+function getSuggestions(root, input, maxEdits) {
     let suggestions = {};
-    generateSuggestions(0, root, input.toLowerCase(), maxEdits, suggestions);
+    let visited=new Set();
+    generateSuggestions(0, root, input.toLowerCase(), maxEdits, suggestions, visited);
 
     let sorted = Object.entries(suggestions)
         .map(([word, score]) => [word, maxEdits - score])
-        .sort((a, b) => a[1] - b[1] || a[0].localeCompare(b[0]));
-
+        .sort(compare(input));
     return sorted;
 }
 
@@ -101,16 +108,36 @@ async function loadDictionaryFromFile() {
 
 window.onload = loadDictionaryFromFile;
 
-function autoCorrect(){
-    let inputWord = document.querySelector("#input").value;  
+let timer;
+function debounce(delay=300){
+    clearTimeout(timer);
+    timer=setTimeout(autoCorrect, delay);
+}
+
+function autoCorrect(){    
+    let input = document.querySelector("#input").value;   
     const msg=document.querySelector("#msg");
-    if(inputWord.length==0 && msg.firstChild) {
+    if(input.length==0 && msg.firstChild) {
         msg.removeChild(msg.firstChild);
         return;
     }
     let maxEdits=2;
-    let result = getSuggestions(root, inputWord, maxEdits);    
-    if (result[0][1] === 0) {
+    let result = getSuggestions(root, input, maxEdits);    
+    console.log(result);
+    if(result.length==0){
+        let p = document.createElement("p");
+        p.textContent = "Word not found";
+        p.style.color = "orange";
+        p.style.fontSize = "25px";
+        if (msg.firstChild) {
+            msg.removeChild(msg.firstChild);
+        }
+
+        msg.appendChild(p);
+        return;
+    }
+
+    if (result.length==1) {
         let p = document.createElement("p");
         p.textContent = "Word is already correct";
         p.style.color = "green";

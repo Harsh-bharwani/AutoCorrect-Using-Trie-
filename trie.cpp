@@ -95,10 +95,13 @@ int prefixMatch(string a, string b){
     }
     return ct;
 }
+
 bool compare(pair<string, int>& p1, pair<string, int>& p2){
     if(p1.second==p2.second) return prefixMatch(p1.first, input)>prefixMatch(p2.first, input);
     return p1.second>p2.second;
 }
+
+
 int main(){
     TrieNode* root=new TrieNode();  
     loadDisctionary(root, "dictionary.txt");     
