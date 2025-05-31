@@ -1,9 +1,7 @@
 body{
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-color: white;
 }
-.card-header{
-    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-}
+
 #crtMsg{
     background: linear-gradient(135deg, #10b981 0%, #059669 100%);
 }
