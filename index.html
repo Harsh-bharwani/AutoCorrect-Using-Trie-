@@ -10,37 +10,56 @@
         body{
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
-        ul{
-            margin: 10px 2px 2px 2px;
-            list-style: none;
-            text-align: center;
-        } 
         .card-header{
             background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
         }
-        
+        #crtMsg{
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+        .bi-keyboard{
+            font-size: 100px;
+        }
+        .bi-search{
+            font-size: 50px;
+            margin-bottom: 25px;
+        }
+        #suggestions div:hover{
+            transform: scale(1.02);
+            border: 2px solid rgb(0, 119, 255);
+        }
     </style>
 </head>
 <body class="d-flex justify-content-center container-fluid align-items-center">
-    <div class="card d-flex justify-content-center h-100 border border-white m-5 col-lg-6 col-12">
-        <div class="card-header bg-primary text-white p-4">
+    <div class="card d-flex justify-content-center border border-white m-5 col-lg-6 col-12">
+        <div class="card-header bg-primary text-white p-4 mb-3">
             <h1 class="text-center"><span class="bi bi-vector-pen"></span>Smart Auto-Correct</h1>
             <p class="text-center p-2">Powered by advanced Trie data structure and edit-distance algorithm for lightning-fast suggestions</p>
         </div>
-        <div class="card-body" id="container">
-                <input id="input" type="text" class="form-control text-center rounded rounded-4 h-25 border border-primary-subtle" placeholder="Type a word to get intelligent suggestions..." oninput="debounce()">
-                <div id="msg" class="text-center h-50 m-3 align-items-center">
-                    <div class="bi bi-keyboard-fill fs-1"></div>
-                    <p class="m-3 text-secondary">Start typing to see intelligent word suggestions</p>
+        <div class="card-body pb-5 pt-5 p-4 bg-light" id="container">
+                <input id="input" type="text" class="form-control rounded rounded-4 border border-primary-subtle text-center p-3" placeholder="Type a word to get intelligent suggestions..." onkeyup="debounce()">
+                <!-- <i class="bi bi-search d-inline "></i> -->
+                <div id="msg" class="text-center align-items-center mt-3">
+                    <div id="default" class="mt-5">
+                        <div class="bi bi-keyboard text-secondary"></div>
+                        <p class="text-secondary">
+                            Start typing to see intelligent word suggestions
+                        </p> 
+                    </div>
+                    <div id="crtMsg" class="text-white p-3 fs-5 rounded rounded-4 d-none">
+                        <span class="bi bi-check-circle-fill"></span>&nbsp;Perfect! Word is already correct
+                    </div>
+                    <div id="suggestions" class="d-none">
+                    </div>
+
                 </div>
         </div>
-        <div class="card-footer border border-3 w-100">
-            <details class="" open>                
+        <div class="card-footer border border-3 w-100 mt-4">
+            <details class="">                
                 <summary  class="fw-bold">
                     <span class="bi bi-info-circle-fill"></span>&nbsp; How it works...
                 </summary>
                 <div class="text-wrap m-3">
-                    Our algorithm uses a Trie data structure to efficiently find similar words with up to 2 character differences. Suggestions are ranked by edit distance and alphabetical order for optimal accuracy.
+                    Our algorithm uses a Trie data structure to efficiently find similar words with up to 2 character differences. Suggestions are ranked by edit distance and Prefix-Matching for optimal accuracy.
                 </div>
             </details>
         </div>

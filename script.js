@@ -110,57 +110,75 @@ window.onload = loadDictionaryFromFile;
 
 let timer;
 function debounce(delay=300){
+    // console.log(input.value);
+    
     clearTimeout(timer);
     timer=setTimeout(autoCorrect, delay);
 }
+const input = document.querySelector("#input");   
+const crtMsg=document.querySelector("#crtMsg");
+const def=document.querySelector("#default");
+const suggestions=document.querySelector("#suggestions");
+
+function updateText(event){    
+    input.value=event.target.children[0].textContent;
+    def.classList.add("d-none");
+    suggestions.classList.add("d-none");
+    suggestions.innerHTML="";
+    crtMsg.classList.remove("d-none");
+}
 
 function autoCorrect(){    
-    let input = document.querySelector("#input").value;   
-    const msg=document.querySelector("#msg");
-    if(input.length==0 && msg.firstChild) {
-        msg.removeChild(msg.firstChild);
+    if(input.value.length==0) { // No input is entered
+        def.classList.remove("d-none");
+        def.children[0].className="bi bi-keyboard text-secondary";
+        def.children[1].textContent=`Start typing to see intelligent word suggestions`;
+        crtMsg.classList.add("d-none");
+        suggestions.classList.add("d-none");
         return;
     }
     let maxEdits=2;
-    let result = getSuggestions(root, input, maxEdits);    
-    console.log(result);
-    if(result.length==0){
-        let p = document.createElement("p");
-        p.textContent = "Word not found";
-        p.style.color = "orange";
-        p.style.fontSize = "25px";
-        if (msg.firstChild) {
-            msg.removeChild(msg.firstChild);
-        }
-
-        msg.appendChild(p);
+    let result = getSuggestions(root, input.value, maxEdits);  
+    // console.log(result);
+    // console.log(result.length);
+    
+    if(result.length===0){ // No suggestions generated under given maxEdits
+        // console.log("no result");
+        def.classList.remove("d-none");
+        def.children[0].className="bi bi-search text-secondary";
+        def.children[1].textContent=`No suggestions found for "${input.value}"`;
+        crtMsg.classList.add("d-none");
+        suggestions.classList.add("d-none");
         return;
     }
 
-    if (result.length==1) {
-        let p = document.createElement("p");
-        p.textContent = "Word is already correct";
-        p.style.color = "green";
-        p.style.fontSize = "25px";
-        if (msg.firstChild) {
-            msg.removeChild(msg.firstChild);
-        }
-
-        msg.appendChild(p);
+    if (result.length===1) { // Input word is already correct 
+        def.classList.add("d-none");
+        suggestions.classList.add("d-none");
+        suggestions.innerHTML="";
+        crtMsg.classList.remove("d-none");
         return;
     }
+    // console.log(result);
 
-    let ul=document.createElement("ul");
-    let ct=0;
-    for (let [word, edits] of result) {
-        let li=document.createElement("li");
-        li.innerHTML=`${word} (Edits: ${edits})`;
-        ul.appendChild(li);
-        ct++;
-        if(ct>6) break;
+    def.classList.add("d-none");
+    crtMsg.classList.add("d-none");
+    suggestions.classList.remove("d-none");
+    for(let i=0;i<result.length && i<5;i++)
+    {
+        suggestions.innerHTML="";
+        let div=document.createElement("div");
+        let p=document.createElement("p");
+        p.className="my-auto fw-semibold";
+        p.textContent=result[i][0];
+        div.append(p);
+        let btn=document.createElement("button");
+        btn.className="btn btn-primary rounded-pill";
+        btn.textContent=`${result[i][1]} edits`;
+        div.append(btn);
+        div.className="rounded rounded-4 mt-2 p-3 d-flex justify-content-between shadow";
+        div.onclick=updateText;
+        suggestions.append(div);
     }
-    if (msg.firstChild) {
-    msg.removeChild(msg.firstChild);
-    }
-    msg.appendChild(ul);
 }
+
