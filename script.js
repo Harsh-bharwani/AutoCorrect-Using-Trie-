@@ -112,21 +112,35 @@ async function loadDictionaryFromFile() {
     console.log("Dictionary loaded!");
 }
 
-function setTitle(word){
-    return new Promise((resolve, reject)=>{
+function setTitle(word, delay){
+    return new Promise((resolve)=>{
         setTimeout(()=>{
-            correctedTitle.textContent=word;
+            split1=word.split(" ");
+            if(split1[0]==="Smart")  {
+                if(split1[1].endsWith("Correct")){
+                    correctedTitle.innerHTML=split1[0].fontcolor("orange") + " Auto-" + "Correct".fontcolor("lightgreen");
+                }
+                else{
+                    correctedTitle.innerHTML=split1[0].fontcolor("orange") + " " + split1[1];
+                }
+            }
+            else if(split1[1].endsWith("Correct")){
+                    correctedTitle.innerHTML=split1[0]+ " Auto-" + "Correct".fontcolor("lightgreen");
+            }
+            else{
+                correctedTitle.textContent=word;
+            }
             resolve();
-        }, 1000);
+        }, delay);
     }) 
 }
 
 setInterval(correctTitle, 4000);
 
 async function correctTitle(){
-    const corrections=['Smrat Auto-Corect', 'Smart Auto-Corect', 'Smart Auto-Correct', 'Smartt Auto-Correct'];
+    const corrections=['Smart Auto-Corect', 'Smrat Auto-Correct', 'Smart Auto-Correct', 'Smartt Auto-Corect'];
     for(let word of corrections){
-        await setTitle(word); 
+        await setTitle(word, 1000);
     }
 }
 
