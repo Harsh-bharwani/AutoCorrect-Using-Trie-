@@ -116,6 +116,8 @@ function setTitle(word, delay){
     return new Promise((resolve)=>{
         setTimeout(()=>{
             split1=word.split(" ");
+            console.log(split1, delay);
+            
             if(split1[0]==="Smart")  {
                 if(split1[1].endsWith("Correct")){
                     correctedTitle.innerHTML=split1[0].fontcolor("orange") + " Auto-" + "Correct".fontcolor("lightgreen");
@@ -135,12 +137,12 @@ function setTitle(word, delay){
     }) 
 }
 
-setInterval(correctTitle, 4000);
+setInterval(correctTitle, 8000);
 
 async function correctTitle(){
     const corrections=['Smart Auto-Corect', 'Smrat Auto-Correct', 'Smart Auto-Correct', 'Smartt Auto-Corect'];
     for(let word of corrections){
-        await setTitle(word, 1000);
+        await setTitle(word,  word==="Smartt Auto-Corect"?5000: 1000);
     }
 }
 
