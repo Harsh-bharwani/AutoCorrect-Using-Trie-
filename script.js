@@ -140,7 +140,7 @@ function autoCorrect(){
     let maxEdits=2;
     let result = getSuggestions(root, input.value, maxEdits);  
     // console.log(result);
-    // console.log(result.length);
+    console.log(result.length);
     
     if(result.length===0){ // No suggestions generated under given maxEdits
         // console.log("no result");
@@ -164,9 +164,9 @@ function autoCorrect(){
     def.classList.add("d-none");
     crtMsg.classList.add("d-none");
     suggestions.classList.remove("d-none");
+    suggestions.innerHTML="";
     for(let i=0;i<result.length && i<5;i++)
     {
-        suggestions.innerHTML="";
         let div=document.createElement("div");
         let p=document.createElement("p");
         p.className="my-auto fw-semibold";
