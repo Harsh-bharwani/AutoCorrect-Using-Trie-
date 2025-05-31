@@ -115,9 +115,7 @@ async function loadDictionaryFromFile() {
 function setTitle(word, delay){
     return new Promise((resolve)=>{
         setTimeout(()=>{
-            split1=word.split(" ");
-            console.log(split1, delay);
-            
+            split1=word.split(" ");            
             if(split1[0]==="Smart")  {
                 if(split1[1].endsWith("Correct")){
                     correctedTitle.innerHTML=split1[0].fontcolor("orange") + " Auto-" + "Correct".fontcolor("lightgreen");
@@ -137,20 +135,18 @@ function setTitle(word, delay){
     }) 
 }
 
-setInterval(correctTitle, 8000);
+setInterval(correctTitle, 5500);
 
 async function correctTitle(){
     const corrections=['Smart Auto-Corect', 'Smrat Auto-Correct', 'Smart Auto-Correct', 'Smartt Auto-Corect'];
     for(let word of corrections){
-        await setTitle(word,  word==="Smartt Auto-Corect"?5000: 1000);
+        await setTitle(word,  word==="Smartt Auto-Corect"?2500: 1000);
     }
 }
 
 
 let timer;
-function debounce(delay=300){
-    // console.log(input.value);
-    
+function debounce(delay=300){    
     clearTimeout(timer);
     timer=setTimeout(autoCorrect, delay);
 }
@@ -174,11 +170,8 @@ function autoCorrect(){
     }
     let maxEdits=2;
     let result = getSuggestions(root, input.value, maxEdits);  
-    // console.log(result);
-    console.log(result.length);
-    
+
     if(result.length===0){ // No suggestions generated under given maxEdits
-        // console.log("no result");
         def.classList.remove("d-none");
         def.children[0].className="bi bi-search text-secondary";
         def.children[1].textContent=`No suggestions found for "${input.value}"`;
@@ -194,7 +187,6 @@ function autoCorrect(){
         crtMsg.classList.remove("d-none");
         return;
     }
-    // console.log(result);
 
     def.classList.add("d-none");
     crtMsg.classList.add("d-none");
