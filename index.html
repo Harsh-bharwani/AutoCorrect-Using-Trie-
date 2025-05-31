@@ -27,12 +27,16 @@
             transform: scale(1.02);
             border: 2px solid rgb(0, 119, 255);
         }
+        .card-header h1:hover{
+            transform: scale(1.05);
+        }
+        
     </style>
 </head>
 <body class="d-flex justify-content-center container-fluid align-items-center">
-    <div class="card d-flex justify-content-center border border-white m-5 col-lg-6 col-12">
+    <div class="card d-flex justify-content-center border border-white m-5 col-lg-6 col-12 shadow-lg">
         <div class="card-header bg-primary text-white p-4 mb-3">
-            <h1 class="text-center"><span class="bi bi-vector-pen"></span>Smart Auto-Correct</h1>
+            <h1 class="text-center shadow rounded rounded-2 p-3"><span class="bi bi-vector-pen"></span><span id="correctedTitle">Smartt Auto-Correct</span></h1>
             <p class="text-center p-2">Powered by advanced Trie data structure and edit-distance algorithm for lightning-fast suggestions</p>
         </div>
         <div class="card-body pb-5 pt-5 p-4 bg-light" id="container">

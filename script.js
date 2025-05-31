@@ -24,6 +24,12 @@ function search(root, word){
     }
     return node.isEndOfWord;
 }
+// Accessing the required elements
+const input = document.querySelector("#input");   
+const crtMsg=document.querySelector("#crtMsg");
+const def=document.querySelector("#default");
+const suggestions=document.querySelector("#suggestions");
+const correctedTitle=document.querySelector("#correctedTitle");
 
 function generateSuggestions(i, root, word, maxEdits, suggestions, visited){
     const key = i+ "|" + word + "|" + maxEdits; // where 'step' is the i-th step in
@@ -106,7 +112,24 @@ async function loadDictionaryFromFile() {
     console.log("Dictionary loaded!");
 }
 
-window.onload = loadDictionaryFromFile;
+function setTitle(word){
+    return new Promise((resolve, reject)=>{
+        setTimeout(()=>{
+            correctedTitle.textContent=word;
+            resolve();
+        }, 1000);
+    }) 
+}
+
+setInterval(correctTitle, 4000);
+
+async function correctTitle(){
+    const corrections=['Smrat Auto-Corect', 'Smart Auto-Corect', 'Smart Auto-Correct', 'Smartt Auto-Correct'];
+    for(let word of corrections){
+        await setTitle(word); 
+    }
+}
+
 
 let timer;
 function debounce(delay=300){
@@ -115,10 +138,6 @@ function debounce(delay=300){
     clearTimeout(timer);
     timer=setTimeout(autoCorrect, delay);
 }
-const input = document.querySelector("#input");   
-const crtMsg=document.querySelector("#crtMsg");
-const def=document.querySelector("#default");
-const suggestions=document.querySelector("#suggestions");
 
 function updateText(event){    
     input.value=event.target.children[0].textContent;
@@ -182,3 +201,5 @@ function autoCorrect(){
     }
 }
 
+window.addEventListener("load",loadDictionaryFromFile);
+window.addEventListener("load",correctTitle());
