@@ -1,3 +1,5 @@
+// Created to learn and hands on the trie dtaa structure 
+
 #include<bits/stdc++.h>
 #include<fstream> // for file input/ output
 using namespace std;
