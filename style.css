@@ -19,3 +19,7 @@ body{
 .card-header h1:hover{
     transform: scale(1.05);
 }
+#suggestions div:hover{
+    cursor: pointer;
+}
+

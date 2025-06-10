@@ -15,6 +15,7 @@ smart-auto-correct/
 ├── script.js        # Core logic (Trie, autocorrect, suggestions)
 ├── words.txt        # Word dictionary (used to build the Trie)
 ├── trie.cpp         # Initial logic written in C++  
+├── images           # To keep the favicon image
 ```
 
 ### Key Components:

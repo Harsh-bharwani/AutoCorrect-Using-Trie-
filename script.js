@@ -32,27 +32,26 @@ const suggestions=document.querySelector("#suggestions");
 const correctedTitle=document.querySelector("#correctedTitle");
 
 function generateSuggestions(i, root, word, maxEdits, suggestions, visited){
-    const key = i+ "|" + word + "|" + maxEdits; // where 'step' is the i-th step in
+    const key = i+ "|" + word + "|" + maxEdits; // where 'step' is the i-th step in    
+    if(visited.has(key)) return;
+    visited.add(key);   
     if(search(root, word)){
         if(!suggestions[word] || suggestions[word]<maxEdits){
             suggestions[word]=maxEdits;
         }
         return;
     }
-    if(i>=word.length || maxEdits ==0) return;
-    if(visited.has(key)) return;
-    visited.add(key);
-    // Directly jumping to the next index
+    if(i>word.length || maxEdits ==0) return;
     generateSuggestions(i + 1, root, word, maxEdits, suggestions, visited);
     for(let j=0;j<26;j++){
         const ch=String.fromCharCode(j+'a'.charCodeAt());
         // update
-        generateSuggestions(i + 1, root, word.slice(0, i) + ch + word.slice(i+1), maxEdits-1, suggestions, visited);
+        if(i<word.length) generateSuggestions(i + 1, root, word.slice(0, i) + ch + word.slice(i+1), maxEdits-1, suggestions, visited);
         // insert
         generateSuggestions(i + 1, root, word.slice(0, i) + ch + word.slice(i), maxEdits-1, suggestions, visited);
     }
     // delete
-    generateSuggestions(i + 1, root, word.slice(0, i) + word.slice(i+1), maxEdits-1, suggestions, visited);
+    if(i<word.length) generateSuggestions(i + 1, root, word.slice(0, i) + word.slice(i+1), maxEdits-1, suggestions, visited);
     // transpositions
     if(i+1<word.length)
     {
@@ -91,7 +90,8 @@ function getSuggestions(root, input, maxEdits) {
     let suggestions = {};
     let visited=new Set();
     generateSuggestions(0, root, input.toLowerCase(), maxEdits, suggestions, visited);
-
+    // console.log(suggestions);
+    
     let sorted = Object.entries(suggestions)
         .map(([word, score]) => [word, maxEdits - score])
         .sort(compare(input));
@@ -168,9 +168,16 @@ function autoCorrect(){
         suggestions.classList.add("d-none");
         return;
     }
+    if (search(root, input.value)) { // Input word is already correct 
+        def.classList.add("d-none");
+        suggestions.classList.add("d-none");
+        suggestions.innerHTML="";
+        crtMsg.classList.remove("d-none");
+        return;
+    }
     let maxEdits=2;
     let result = getSuggestions(root, input.value, maxEdits);  
-
+    
     if(result.length===0){ // No suggestions generated under given maxEdits
         def.classList.remove("d-none");
         def.children[0].className="bi bi-search text-secondary";
@@ -178,16 +185,8 @@ function autoCorrect(){
         crtMsg.classList.add("d-none");
         suggestions.classList.add("d-none");
         return;
-    }
-
-    if (result.length===1) { // Input word is already correct 
-        def.classList.add("d-none");
-        suggestions.classList.add("d-none");
-        suggestions.innerHTML="";
-        crtMsg.classList.remove("d-none");
-        return;
-    }
-
+    }    
+    
     def.classList.add("d-none");
     crtMsg.classList.add("d-none");
     suggestions.classList.remove("d-none");
